@@ -1,0 +1,8 @@
+pandas
+numpy
+gradio
+jupyter
+jupyterlab
+sklearn
+fastparquet
+pyarrow
