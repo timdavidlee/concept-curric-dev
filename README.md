@@ -21,4 +21,19 @@ $ pyenv which python
 ### Working with data
 
 
+### working with Jupyter lab locally
+
+Get node js [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
+
+Then verify node is installed:
+
+```
+
+```
+
+
+```
+pip install -U jupyterlab ipywidgets
+```
+
 ### Datasets
