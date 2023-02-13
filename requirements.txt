@@ -3,6 +3,14 @@ numpy
 gradio
 jupyter
 jupyterlab
-sklearn
+scikit-learn
 fastparquet
 pyarrow
+case-converter
+ipython
+ipykernel
+scipy
+seaborn
+matplotlib
+lightgbm
+xgboost

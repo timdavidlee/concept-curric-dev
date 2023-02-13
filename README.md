@@ -23,7 +23,11 @@ $ pyenv which python
 
 ### working with Jupyter lab locally
 
-Get node js [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
+Get node js [https://nodejs.org/en/download/](https://nodejs.org/en/download/) or via `brew`:
+
+```
+brew install nodejs
+```
 
 Then verify node is installed:
 
