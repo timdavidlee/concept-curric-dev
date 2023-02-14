@@ -1,4 +1,4 @@
-""" python -m ink_curriculum.projects.ecommerce_shipping"""
+"""python -m ink_curriculum.projects.ecommerce_shipping"""
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
@@ -7,23 +7,13 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import cross_validate
 
-from xgboost import XGBClassifier
-
-from ink_curriculum.datasets.util import normalize_column_names
-
-
-def make_linear_model(preprocessor: Pipeline):
-    return Pipeline(steps=[
-        ("preprocessor", preprocessor),
-        ("classifier", LogisticRegression()),
-    ])
-
-
-def make_tree_model(preprocessor: Pipeline):
-    return Pipeline(steps=[
-        ("preprocessor", preprocessor),
-        ("classifier", XGBClassifier()),
-    ])
+from ink_curriculum.projects.funcs import (
+    normalize_column_names, 
+    make_linear_preprocessor,
+    make_tree_preprocessor,
+    make_tree_model,
+    make_linear_model,
+)
 
 
 def main():
@@ -38,35 +28,19 @@ def main():
     normalize_column_names(df)
     target = "reachedon_time_yn"
 
-    x = df.drop(target, axis=1)
+    x = df[categorical_feature_cols + numeric_feature_cols]
     y = df[target].values
 
-    categorical_transformer = Pipeline(
-        steps=[
-            ("encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
-        ]
-    )
-
-    numeric_transformer = Pipeline(
-        steps=[
-            ("scaler", RobustScaler()),
-        ]
-    )
-
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ("num", numeric_transformer, numeric_feature_cols),
-            ("cat", categorical_transformer, categorical_feature_cols),
-        ]
-    )
+    linear_preprocessor = make_linear_preprocessor(categorical_feature_cols, numeric_feature_cols)
+    tree_preprocessor = make_tree_preprocessor(categorical_feature_cols)
 
     classifiers = [
-        ("log_reg", make_linear_model(preprocessor)),
-        ("tree", make_tree_model(preprocessor)),
+        ("log_reg", make_linear_model(linear_preprocessor)),
+        ("tree", make_tree_model(tree_preprocessor)),
     ]
 
     for name, clf in classifiers:
-        scores = cross_validate(clf, x, y)
+        scores = cross_validate(clf, x, y, scoring="roc_auc")
         print(name, np.round(scores["test_score"], 3))
 
 
