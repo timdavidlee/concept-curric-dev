@@ -31,7 +31,7 @@ def main():
     x = df[categorical_feature_cols + numeric_feature_cols]
     y = df[target].values
 
-    linear_preprocessor = make_linear_preprocessor(categorical_feature_cols, numeric_feature_cols)
+    linear_preprocessor = make_linear_preprocessor(numeric_feature_cols, categorical_feature_cols)
     tree_preprocessor = make_tree_preprocessor(categorical_feature_cols)
 
     classifiers = [

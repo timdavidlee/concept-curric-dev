@@ -29,15 +29,6 @@ Get node js [https://nodejs.org/en/download/](https://nodejs.org/en/download/) o
 brew install nodejs
 ```
 
-Then verify node is installed:
-
-```
-
-```
-
-
 ```
 pip install -U jupyterlab ipywidgets
 ```
-
-### Datasets
