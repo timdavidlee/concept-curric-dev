@@ -33,7 +33,7 @@ class OListDataset:
     _PAYMENTS_CSV = "olist_order_payments_dataset.csv"
     _PRODUCTS_CSV = "olist_products_dataset.csv"
     _SELLERS_CSV = "olist_sellers_dataset.csv"
-    
+
     _DATASETS = {
         "customers": _CUSTOMERS_CSV,
         "orders": _ORDERS_CSV,
@@ -64,7 +64,6 @@ class OListDataset:
             self._format_orders_df(df)
         return df
 
-    
     @staticmethod
     def _format_orders_df(df_orders: pd.DataFrame) -> pd.DataFrame:
         date_fields = [
@@ -78,16 +77,20 @@ class OListDataset:
             df_orders[f] = pd.to_datetime(df_orders[f])
 
 
-
 @timeit
 def create_order_features(
     df_orders: pd.DataFrame,
     output_dir: PathLike
 ) -> list:
     """Creates estimated deliver lookup by days"""
-    df_orders["estimated_delivery"] = df_orders["order_estimated_delivery_date"] - df_orders["order_purchase_timestamp"]
+    df_orders["estimated_delivery"] = \
+        df_orders["order_estimated_delivery_date"] - \
+        df_orders["order_purchase_timestamp"]
+
     df_orders["estimated_delivery"] = df_orders["estimated_delivery"].dt.days
-    output = df_orders[["order_id", "customer_id", "estimated_delivery"]].copy()
+    output = df_orders[
+        ["order_id", "customer_id", "estimated_delivery"]
+    ].copy()
 
     savefile = output_dir / "order2estimated_delivery.feather"
     save_feather(output, savefile)
@@ -105,13 +108,14 @@ def create_order2customer_state(
         how="left",
         on="customer_id"
     )
-    
+
     savefile = output_dir / "order2customer_state.feather"
     save_feather(
         merged_df[["order_id", "customer_state"]],
         savefile
     )
     return [savefile]
+
 
 @timeit
 def create_order2category_distribution(
@@ -120,14 +124,20 @@ def create_order2category_distribution(
     output_dir: PathLike,
 ):
     merged_df = df_order_items.merge(
-        df_products[["product_id", "product_category_name", "product_weight_g"]],
+        df_products[
+            ["product_id", "product_category_name", "product_weight_g"]
+        ],
         how="left",
         on="product_id"
     )
 
-    agg_df = merged_df.groupby(["order_id", "product_category_name"], as_index=False).agg(
-        item_ct=pd.NamedAgg("order_item_id", "size"),
-        item_weight_g=pd.NamedAgg("product_weight_g", "sum"),
+    agg_df = (
+        merged_df
+        .groupby(["order_id", "product_category_name"], as_index=False)
+        .agg(
+            item_ct=pd.NamedAgg("order_item_id", "size"),
+            item_weight_g=pd.NamedAgg("product_weight_g", "sum"),
+        )
     )
 
     agg_df1 = agg_df.pivot_table(
@@ -164,10 +174,10 @@ def create_order2price_and_freight(
     df_order_items: pd.DataFrame,
     output_dir: PathLike
 ):
-    agg_df =  df_order_items.groupby("order_id").agg(
-        item_ct = pd.NamedAgg("order_item_id", "size"),
-        total_price = pd.NamedAgg("price", "sum"),
-        total_freight = pd.NamedAgg("freight_value", "sum")
+    agg_df = df_order_items.groupby("order_id").agg(
+        item_ct=pd.NamedAgg("order_item_id", "size"),
+        total_price=pd.NamedAgg("price", "sum"),
+        total_freight=pd.NamedAgg("freight_value", "sum")
     ).reset_index()
     savefile = output_dir / "order2price_and_freight.feather"
     save_feather(agg_df, savefile)
@@ -183,7 +193,7 @@ class FeatureFactory:
         self.olist_dataset = olist_dataset
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        
+
     def _get_dataset(self, key: str):
         return self.olist_dataset.get_dataset(key)
 
@@ -193,7 +203,7 @@ class FeatureFactory:
             self._get_dataset("orders"),
             self.cache_dir,
         )
-        
+
         fls += create_order2category_distribution(
             self._get_dataset("order_items"),
             self._get_dataset("products"),
@@ -203,11 +213,9 @@ class FeatureFactory:
             self._get_dataset("order_items"),
             self.cache_dir,
         )
-        
+
         fls += create_order2customer_state(
             self._get_dataset("orders"),
             self._get_dataset("customers"),
             self.cache_dir,
         )
-
-        
