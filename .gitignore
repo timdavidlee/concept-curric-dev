@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# skip data directory
+./olist_feature_cache/*
+./translated_msgs/*
+
 # skip _ prefixed notebooks
 _*.ipynb*
 
