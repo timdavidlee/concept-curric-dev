@@ -45,6 +45,32 @@ class OListDataset:
 
     def __init__(self, csv_dir: PathLike):
         self.csv_dir = Path(csv_dir)
+        self.unified_order_items_df = self._make_unified_order_items_df()
+        self.unified_orders_df = self._make_unified_orders_df()
+
+    def _make_unified_orders_df(self):
+        df_orders = self.get_dataset("orders")
+        df_customers = self.get_dataset("customers")
+        return df_orders.merge(
+            df_customers,
+            how="left",
+            on="customer_id"
+        )
+
+    def _make_unified_order_items_df(self):
+        df_order_items = self.get_dataset("order_items")
+        df_products = self.get_dataset("products")
+        df_sellers = self.get_dataset("sellers")
+
+        return df_order_items.merge(
+            df_products,
+            how="left",
+            on="product_id"
+        ).merge(
+            df_sellers,
+            how="left",
+            on="seller_id"
+        )
 
     def get_dataset(self, key: str):
         if key not in self._DATASETS:

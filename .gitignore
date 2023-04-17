@@ -7,8 +7,8 @@ __pycache__/
 *.so
 
 # skip data directory
-./olist_feature_cache/*
-./translated_msgs/*
+olist_feature_cache/*
+translated_msgs/*
 
 # skip _ prefixed notebooks
 _*.ipynb*
