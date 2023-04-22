@@ -1,0 +1,1 @@
+jupyter lab --port 8890 --NotebookApp.password='argon2:$argon2id$v=19$m=10240,t=10,p=8$Vcfb6VnXnmQQBZmQfujV4w$Bxha4uYRNbX+JfP6x04sbeG0I9jFQyA9Uer+srQlBVc'
