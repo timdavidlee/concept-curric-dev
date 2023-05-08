@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# feather / data
+*.feather
+*.parquet
+
 # skip data directory
 olist_feature_cache/*
 translated_msgs/*
